@@ -343,7 +343,7 @@ export async function generateLocally(input: IdeaInput): Promise<GenerateResults
       "نجمع 50 ألف دولار لتوسيع الاستحواذ والوصول إلى تناسب المنتج والسوق في غضون 6 أشهر.",
       "Estamos recaudando $50K para escalar la adquisición y alcanzar el product-market fit en 6 meses."
     ),
-    fullScript: "",
+    fullScript: ",
   };
 
   pitch.fullScript = `${pitch.hook}
