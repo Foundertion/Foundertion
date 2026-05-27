@@ -343,7 +343,7 @@ export async function generateLocally(input: IdeaInput): Promise<GenerateResults
       "نجمع 50 ألف دولار لتوسيع الاستحواذ والوصول إلى تناسب المنتج والسوق في غضون 6 أشهر.",
       "Estamos recaudando $50K para escalar la adquisición y alcanzar el product-market fit en 6 meses."
     ),
-    fullScript: ""
+    fullScript: "
   };
 
   pitch.fullScript = `${pitch.hook}
@@ -391,8 +391,8 @@ ${t("Terima kasih.", "Thank you.", "ありがとうございます。", "谢谢�
       { title: t("Mudah Digunakan", "Easy to Use", "使いやすい", "易于使用", "사용하기 쉬움", "سهل الاستخدام", "Fácil de Usar"), description: t("No learning curve. Langsung produktif.", "No learning curve. Start productive immediately.", "学習曲線なし。すぐに生産的に開始。", "没有学习曲线。立即开始高效工作。", "학습 곡선 없음. 즉시 생산적으로 시작.", "لا منحنى تعليمي. ابدأ بإنتاجية فورية.", "Sin curva de aprendizaje. Comienza productivo inmediatamente.") }
     ],
     socialProof: [
-      { quote: t(""Ini exactly yang saya butuhkan. Hemat 5 jam per minggu!"", ""This is exactly what I needed. Saves me 5 hours per week!"", ""これはまさに私が必要としていたもの。週5時間節約！"", ""这正是我所需要的。每周节省5小时！"", ""이것은 내가 정확히 필요했던 것. 주당 5시간 절약!"", ""هذا بالضبط ما كنت بحاجة إليه. يوفر لي 5 ساعات أسبوعيًا!"", ""Esto es exactamente lo que necesitaba. ¡Me ahorra 5 horas por semana!""), author: "Sarah K.", role: t("Founder di TechStart", "Founder at TechStart", "TechStart創業者", "TechStart创始人", "TechStart 창업자", "مؤسس TechStart", "Fundador en TechStart") },
-      { quote: t(""Game changer untuk solo founder seperti saya."", ""Game changer for solo founders like me."", ""私のようなソロファウンダーのゲームチェンジャー。"", ""对我这样的独立创始人来说是游戏规则改变者。"", ""나 같은 솔로 창업자를 위한 게임체인저."", ""غيّر قواعد اللعبة للمؤسسين الفرديين مثلي."", ""Cambia las reglas del juego para fundadores solitarios como yo.""), author: "David M.", role: "Indie Hacker" }
+      { quote: t("Ini exactly yang saya butuhkan. Hemat 5 jam per minggu!", "This is exactly what I needed. Saves me 5 hours per week!", "これはまさに私が必要としていたもの。週5時間節約！", "这正是我所需要的。每周节省5小时！", "이것은 내가 정확히 필요했던 것. 주당 5시간 절약!", "هذا بالضبط ما كنت بحاجة إليه. يوفر لي 5 ساعات أسبوعيًا!", "Esto es exactamente lo que necesitaba. ¡Me ahorra 5 horas por semana!"), author: "Sarah K.", role: t("Founder di TechStart", "Founder at TechStart", "TechStart創業者", "TechStart创始人", "TechStart 창업자", "مؤسس TechStart", "Fundador en TechStart") },
+      { quote: t("Game changer untuk solo founder seperti saya.", "Game changer for solo founders like me.", "私のようなソロファウンダーのゲームチェンジャー。", "对我这样的独立创始人来说是游戏规则改变者。", "나 같은 솔로 창업자를 위한 게임체인저.", "غيّر قواعد اللعبة للمؤسسين الفرديين مثلي.", "Cambia las reglas del juego para fundadores solitarios como yo."), author: "David M.", role: "Indie Hacker" }
     ],
     faq: [
       { question: t("Kapan produk ini launch?", "When is the product launching?", "いつローンチしますか？", "产品何时发布？", "언제 출시하나요?", "متى يتم إطلاق المنتج؟", "¿Cuándo se lanza el producto?"), answer: t("Kami dalam tahap beta private. Daftar untuk early access.", "We're in private beta. Sign up for early access.", "プライベートベータ中です。早期アクセスに登録してください。", "我们处于私人测试阶段。注册获取早期访问权限。", "프라이빗 베타 중입니다. 얼리 액세스에 등록하세요.", "نحن في مرحلة البيتا الخاصة. سجل للحصول على وصول مبكر.", "Estamos en beta privada. Regístrate para acceso temprano.") },
