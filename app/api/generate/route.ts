@@ -13,7 +13,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const results = await generateLocally({ description });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "API key not configured." },
+        { status: 500 }
+      );
+    }
+
+    const results = await generateLocally({ description, apiKey });
     return NextResponse.json(results);
 
   } catch (error) {
