@@ -312,6 +312,7 @@ export default function Home() {
         )}
       </main>
 
+      <WaitlistSection />
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
         Foundertion — AI Co-Founder for Solo Founders Worldwide
       </footer>
