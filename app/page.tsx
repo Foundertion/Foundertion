@@ -2,6 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
+
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import WaitlistSection from "@/components/WaitlistSection";
+
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
 
 interface Results {
@@ -18,6 +27,42 @@ interface ProjectMemory {
   savedAt: string;
   streak: number;
   lastVisit: string;
+}
+
+
+function WaitlistSection() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle");
+  const join = async () => {
+    if (!email.includes("@")) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("success");
+    } catch { setStatus("error"); }
+  };
+  return (
+    <div className="max-w-2xl mx-auto my-12 p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
+      <h2 className="text-2xl font-bold mb-2">Join 100+ Solo Founders 🚀</h2>
+      <p className="text-muted-foreground mb-6 text-sm">Get notified when new features drop. No spam, ever.</p>
+      {status === "success" ? (
+        <div className="text-primary font-bold text-lg">You are on the list! Check your email. 🎉</div>
+      ) : (
+        <div className="flex gap-2 max-w-md mx-auto flex-wrap">
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 min-w-[200px] px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
+          <button onClick={join} disabled={status === "loading"} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
+            {status === "loading" ? "..." : "Join Waitlist"}
+          </button>
+        </div>
+      )}
+      {status === "error" && <p className="text-red-400 text-sm mt-2">Failed. Try again.</p>}
+    </div>
+  );
 }
 
 function ThemeToggle() {
@@ -312,6 +357,7 @@ export default function Home() {
         )}
       </main>
 
+      <WaitlistSection />
       <WaitlistSection />
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
         Foundertion — AI Co-Founder for Solo Founders Worldwide
