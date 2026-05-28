@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Zap, Map, Target, Rocket, Loader2, Download, Globe,
   CheckCircle, AlertCircle, TrendingUp, Users, DollarSign,
@@ -369,7 +369,7 @@ export default function Home() {
 
       <main className="max-w-6xl mx-auto px-4 py-12">
         {!results && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
@@ -383,10 +383,10 @@ export default function Home() {
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-2">{t.subtitle}</p>
             <p className="text-muted-foreground max-w-2xl mx-auto">{t.description}</p>
-          </motion.div>
+          </div>
         )}
 
-        <motion.div layout className="max-w-3xl mx-auto mb-12">
+        <div>
           <Card className="border-2 border-primary/20 shadow-xl shadow-primary/5">
             <CardContent className="pt-6">
               <textarea
@@ -413,11 +413,11 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
-        <AnimatePresence>
+        
           {results && (
-            <motion.div
+            <div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -455,7 +455,7 @@ export default function Home() {
 
               <div ref={resultRef} className="space-y-6">
                 {activeTab === "validator" && (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <div style={{animation:"fadeUp .4s ease"}}>
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -526,11 +526,11 @@ export default function Home() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 )}
 
                 {activeTab === "plan" && (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <div style={{animation:"fadeUp .4s ease"}}>
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -600,11 +600,11 @@ export default function Home() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 )}
 
                 {activeTab === "pitch" && (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <div style={{animation:"fadeUp .4s ease"}}>
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -646,11 +646,11 @@ export default function Home() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 )}
 
                 {activeTab === "landing" && (
-                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <div style={{animation:"fadeUp .4s ease"}}>
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -717,12 +717,12 @@ export default function Home() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        
       </main>
 
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
