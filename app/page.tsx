@@ -186,7 +186,7 @@ export default function Home() {
       <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/favicon-32.png" alt="Foundertion" className="h-8 w-8 rounded-lg" />
+            <img src="/android-chrome-192.png" alt="Foundertion" className="h-8 w-8 rounded-lg" />
             <span className="font-bold text-xl">Foundertion</span>
             <span className="hidden sm:inline text-xs text-muted-foreground">YOUR AI CO-FOUNDER</span>
           </div>
