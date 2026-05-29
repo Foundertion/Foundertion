@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
 
@@ -327,6 +328,9 @@ export default function Home() {
                 {streak} day streak
               </div>
             )}
+            <Link href="/login" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">
+              Sign In
+            </Link>
             <ThemeToggle />
           </div>
         </div>
