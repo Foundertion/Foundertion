@@ -64,6 +64,100 @@ function MD({ text }: { text: string }) {
   );
 }
 
+
+function DailyCheckin({ memory, onClose }: { memory: any, onClose: () => void }) {
+  const [step, setStep] = useState(0);
+  const [shipped, setShipped] = useState("");
+  const [blocker, setBlocker] = useState("");
+  const [nextStep, setNextStep] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const questions = [
+    { label: "What did you ship yesterday?", placeholder: "Finished landing page / Fixed a bug / Nothing, got stuck...", value: shipped, setValue: setShipped },
+    { label: "What is your blocker today?", placeholder: "Don t know how to do X / Feeling overwhelmed / No blocker!", value: blocker, setValue: setBlocker },
+    { label: "What can you ship in the next 2 hours?", placeholder: "Write copy / Fix that bug / Call one customer...", value: nextStep, setValue: setNextStep },
+  ];
+
+  const submit = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shipped, blocker, nextStep, memory }),
+      });
+      const data = await res.json();
+      setResponse(data.response || "Keep shipping!");
+      setStep(3);
+      const checkins = JSON.parse(localStorage.getItem("foundertion_checkins") || "[]");
+      checkins.push({ shipped, blocker, nextStep, date: new Date().toISOString() });
+      localStorage.setItem("foundertion_checkins", JSON.stringify(checkins.slice(-30)));
+      localStorage.setItem("foundertion_last_checkin", new Date().toISOString());
+    } catch {
+      setResponse("Error. Keep shipping anyway!");
+      setStep(3);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-card border border-primary/30 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="font-bold text-lg text-primary">Daily Check-in</h2>
+            <p className="text-xs text-muted-foreground">2 minutes. Stay on track.</p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-2xl leading-none">x</button>
+        </div>
+
+        {step < 3 ? (
+          <div>
+            <div className="flex gap-1 mb-6">
+              {[0,1,2].map(i => (
+                <div key={i} className={"h-1 flex-1 rounded-full transition-all " + (i <= step ? "bg-primary" : "bg-border")} />
+              ))}
+            </div>
+            <p className="font-medium text-sm mb-3">{questions[step].label}</p>
+            <textarea
+              value={questions[step].value}
+              onChange={e => questions[step].setValue(e.target.value)}
+              placeholder={questions[step].placeholder}
+              rows={3}
+              className="w-full p-3 rounded-lg border border-input bg-background/50 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <div className="flex gap-2 mt-4">
+              {step > 0 && (
+                <button onClick={() => setStep(step - 1)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
+                  Back
+                </button>
+              )}
+              <button
+                onClick={() => step < 2 ? setStep(step + 1) : submit()}
+                disabled={loading}
+                className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50"
+              >
+                {loading ? "Thinking..." : step < 2 ? "Next" : "Get AI Nudge"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="text-3xl mb-3 text-center">🚀</div>
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+              {response}
+            </div>
+            <button onClick={onClose} className="w-full mt-4 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90">
+              Ship It! 🚢
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function WaitlistSection() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
@@ -133,6 +227,7 @@ export default function Home() {
   const [streak, setStreak] = useState(1);
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
+  const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("foundertion_memory");
@@ -214,6 +309,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {showCheckin && <DailyCheckin memory={memory} onClose={() => setShowCheckin(false)} />}
       <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -222,6 +318,9 @@ export default function Home() {
             <span className="hidden sm:inline text-xs text-muted-foreground">YOUR AI CO-FOUNDER</span>
           </div>
           <div className="flex items-center gap-3">
+            <button onClick={() => setShowCheckin(true)} className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20 transition-colors">
+              Daily Check-in
+            </button>
             {streak > 1 && (
               <div className="flex items-center gap-1 text-sm font-bold text-orange-400">
                 <Flame className="h-4 w-4" />

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     if (!apiKey) return NextResponse.json({ error: "No API key" }, { status: 500 });
 
     const context = memory ? "Previous context: " + JSON.stringify(memory) : "";
-    const prompt = "You are Foundertion — AI co-founder who pushes solo founders to ship.\n\n" + context + "\n\nToday check-in:\n- Shipped: " + shipped + "\n- Blocker: " + blocker + "\n- Next step: " + nextStep + "\n\nRespond in SAME language as answers. Give: 1) Validation 2) Blocker Breaker 3) Ship Nudge 4) Momentum status. Be direct, caring, celebrate wins.";
+    const prompt = "You are Foundertion — AI co-founder who pushes solo founders to ship.\n\n" + context + "\n\nToday check-in:\n- Shipped yesterday: " + shipped + "\n- Blocker: " + blocker + "\n- Next 2-hour step: " + nextStep + "\n\nRespond in SAME language as the answers. Give:\n1. **Validation** — celebrate what they shipped\n2. **Blocker Breaker** — specific advice\n3. **Ship Nudge** — one tiny action RIGHT NOW\n4. **Momentum** — shipping or drifting?\n\nTone: caring cofounder, not a lecturer.";
 
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
     const response = data.choices?.[0]?.message?.content || "Keep shipping!";
+
     return NextResponse.json({ response });
   } catch (error) {
     console.error("Checkin error:", error);
