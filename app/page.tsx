@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Globe, Copy, Download, Check, Flame, LogIn, LogOut, User } from "lucide-react";
-import { createClient } from "@/lib/supabase";
-import AuthModal from "@/components/AuthModal";
+import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
 
 interface Results {
   detectedLang: string;
@@ -229,24 +227,12 @@ export default function Home() {
   const [streak, setStreak] = useState(1);
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [showAuth, setShowAuth] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user) setUser(data.user);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => subscription.unsubscribe();
     const saved = localStorage.getItem("foundertion_memory");
     if (saved) {
-      const m: ProjectMemory = JSON.parse(saved as string);
+      const m: ProjectMemory = JSON.parse(saved);
       setMemory(m);
       const newStreak = updateStreak(m);
       setStreak(newStreak);
@@ -273,32 +259,6 @@ export default function Home() {
     setShowRescue(false);
   };
 
-  const saveToCloud = async (ideaText: string, res: Results) => {
-    if (!user) return;
-    setSaving(true);
-    try {
-      const supabase = createClient();
-      await supabase.from("projects").insert({
-        id: crypto.randomUUID(),
-        user_id: user.id,
-        name: ideaText.slice(0, 50),
-        idea: ideaText,
-        language: res.detectedLang,
-        validation: res.validation,
-        plan: res.plan,
-        pitch: res.pitch,
-        landing: res.landing,
-      });
-    } catch (e) { console.error("Save error:", e); }
-    setSaving(false);
-  };
-
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    setUser(null);
-  };
-
   const handleGenerate = async () => {
     if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 characters");
     setLoading(true);
@@ -313,7 +273,6 @@ export default function Home() {
       setResults(data);
       setActiveTab("validation");
       saveMemory(idea, data);
-      saveToCloud(idea, data);
     } catch {
       alert("Failed to generate. Try again.");
     } finally {
@@ -351,7 +310,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {showCheckin && <DailyCheckin memory={memory} onClose={() => setShowCheckin(false)} />}
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => setShowAuth(false)} />}
       <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -368,20 +326,6 @@ export default function Home() {
                 <Flame className="h-4 w-4" />
                 {streak} day streak
               </div>
-            )}
-            {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground hidden sm:inline">{user.email?.split("@")[0]}</span>
-                <button onClick={handleSignOut} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">
-                  <LogOut className="h-3 w-3" />
-                  Out
-                </button>
-              </div>
-            ) : (
-              <button onClick={() => setShowAuth(true)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">
-                <LogIn className="h-3 w-3" />
-                Sign In
-              </button>
             )}
             <ThemeToggle />
           </div>
