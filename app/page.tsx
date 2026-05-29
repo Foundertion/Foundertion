@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
+import { Sun, Moon, Globe, Copy, Download, Check, Flame, LogIn, LogOut, User } from "lucide-react";
+import { createClient } from "@/lib/supabase";
+import AuthModal from "@/components/AuthModal";
 
 interface Results {
   detectedLang: string;
@@ -227,9 +229,19 @@ export default function Home() {
   const [streak, setStreak] = useState(1);
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [showAuth, setShowAuth] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setUser(data.user);
+    });
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
     const saved = localStorage.getItem("foundertion_memory");
     if (saved) {
       const m: ProjectMemory = JSON.parse(saved);
@@ -259,182 +271,31 @@ export default function Home() {
     setShowRescue(false);
   };
 
-  const handleGenerate = async () => {
-    if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 characters");
-    setLoading(true);
+  const saveToCloud = async (idea: string, results: Results) => {
+    if (!user) return;
+    setSaving(true);
     try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: idea }),
+      const supabase = createClient();
+      await supabase.from("projects").insert({
+        id: crypto.randomUUID(),
+        user_id: user.id,
+        name: idea.slice(0, 50),
+        idea,
+        language: results.detectedLang,
+        validation: results.validation,
+        plan: results.plan,
+        pitch: results.pitch,
+        landing: results.landing,
       });
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
-      setResults(data);
-      setActiveTab("validation");
-      saveMemory(idea, data);
-    } catch {
-      alert("Failed to generate. Try again.");
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error("Save error:", e);
     }
+    setSaving(false);
   };
 
-  const loadMemory = () => {
-    if (memory) {
-      setIdea(memory.idea);
-      setResults(memory.results);
-      setActiveTab("validation");
-      setShowRescue(false);
-    }
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
   };
 
-  const exportPDF = async () => {
-    if (!results) return;
-    const { default: jsPDF } = await import("jspdf");
-    const doc = new jsPDF();
-    const content = `FOUNDERTION - Startup Kit\n\nIdea: ${idea}\n\n=== IDEA VALIDATOR ===\n${results.validation}\n\n=== BUSINESS PLAN ===\n${results.plan}\n\n=== PITCH SCRIPT ===\n${results.pitch}\n\n=== LANDING PAGE COPY ===\n${results.landing}`;
-    const lines = doc.splitTextToSize(content, 180);
-    let y = 10;
-    for (const line of lines) {
-      if (y > 280) { doc.addPage(); y = 10; }
-      doc.setFontSize(10);
-      doc.text(line, 15, y);
-      y += 6;
-    }
-    doc.save(`foundertion-${idea.slice(0, 20).replace(/\s+/g, "-")}.pdf`);
-    setExported(true);
-    setTimeout(() => setExported(false), 2000);
-  };
-
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      {showCheckin && <DailyCheckin memory={memory} onClose={() => setShowCheckin(false)} />}
-      <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/android-chrome-192.png" alt="Foundertion" className="h-8 w-8 rounded-lg" />
-            <span className="font-bold text-xl">Foundertion</span>
-            <span className="hidden sm:inline text-xs text-muted-foreground">YOUR AI CO-FOUNDER</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setShowCheckin(true)} className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20 transition-colors">
-              Daily Check-in
-            </button>
-            {streak > 1 && (
-              <div className="flex items-center gap-1 text-sm font-bold text-orange-400">
-                <Flame className="h-4 w-4" />
-                {streak} day streak
-              </div>
-            )}
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto px-4 py-10">
-        {showRescue && memory && (
-          <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
-            <p className="font-bold text-amber-500 mb-1">🚨 Do not quit at 70-85%!</p>
-            <p className="text-sm text-muted-foreground mb-3">
-              You were working on: <strong className="text-foreground">&quot;{memory.idea.slice(0, 60)}...&quot;</strong>
-              <br />Last session: {new Date(memory.savedAt).toLocaleDateString()}. Keep shipping!
-            </p>
-            <div className="flex gap-2">
-              <button onClick={loadMemory} className="px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-bold hover:bg-amber-400">Resume Project →</button>
-              <button onClick={() => setShowRescue(false)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">Start New</button>
-            </div>
-          </div>
-        )}
-
-        {memory && !showRescue && !results && (
-          <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              🧠 Last project: <strong className="text-foreground">&quot;{memory.idea.slice(0, 50)}&quot;</strong>
-            </p>
-            <button onClick={loadMemory} className="text-xs text-primary hover:underline">Resume →</button>
-          </div>
-        )}
-
-        {!results && (
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-6 border border-primary/20">
-              <Globe className="h-4 w-4" />
-              <span>Auto-detects 20+ languages · Generate → Execute → Ship</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Foundertion</h1>
-            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder that remembers. And pushes you to ship.</p>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Write your idea in any language. Get validation, 90-day plan, pitch script & landing copy. Then we make sure you ship it.</p>
-          </div>
-        )}
-
-        <div className="max-w-2xl mx-auto mb-8">
-          <div className="rounded-xl border-2 border-primary/20 bg-card p-6 shadow-xl">
-            <textarea
-              value={idea}
-              onChange={e => setIdea(e.target.value)}
-              placeholder="Describe your startup idea in any language..."
-              className="w-full min-h-[120px] p-4 rounded-lg border border-input bg-background/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary text-base"
-              disabled={loading}
-            />
-            <div className="mt-4 flex gap-3 justify-end flex-wrap">
-              {results && (
-                <button onClick={() => { setResults(null); setIdea(""); }} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
-                  New Idea
-                </button>
-              )}
-              <button onClick={handleGenerate} disabled={loading} className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
-                {loading ? "Generating..." : "⚡ Generate All 4 Tools"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {results && (
-          <div>
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-primary/10 text-primary text-sm border border-primary/20">
-                <Globe className="h-4 w-4" />
-                <span>Language: {results.detectedLang}</span>
-              </div>
-              <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
-                <Download className="h-4 w-4" />
-                {exported ? "Downloaded!" : "Export PDF"}
-              </button>
-            </div>
-
-            <div className="flex gap-2 mb-4 flex-wrap">
-              {TABS.map(tab => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${activeTab === tab.id ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-accent"}`}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-6">
-              <div className="flex justify-end mb-3">
-                <CopyButton text={getTabContent(results, activeTab)} />
-              </div>
-              {activeTab === "validation" && <MD text={results.validation} />}
-              {activeTab === "plan" && <MD text={results.plan} />}
-              {activeTab === "pitch" && <MD text={results.pitch} />}
-              {activeTab === "landing" && <MD text={results.landing} />}
-            </div>
-
-            <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/20 text-center">
-              <p className="font-bold text-primary mb-1">🚢 Now ship it. Do not wait for perfect.</p>
-              <p className="text-sm text-muted-foreground">Done is better than perfect. The 70-85% zone is where projects die. Push through.</p>
-            </div>
-          </div>
-        )}
-
-        <WaitlistSection />
-      </main>
-
-      <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
-        Foundertion — AI Co-Founder for Solo Founders Worldwide
-      </footer>
-    </div>
-  );
-}
