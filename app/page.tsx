@@ -165,7 +165,7 @@ export default function Home() {
   };
 
   const handleGenerate = async () => {
-    if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 karakter");
+    if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 characters");
     setLoading(true);
     try {
       const res = await fetch("/api/generate", {
@@ -179,7 +179,7 @@ export default function Home() {
       setActiveTab("validation");
       saveMemory(idea, data);
     } catch {
-      alert("Failed to generate. Coba lagi.");
+      alert("Failed to generate. Try again.");
     } finally {
       setLoading(false);
     }
@@ -236,14 +236,14 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-4 py-10">
         {showRescue && memory && (
           <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
-            <p className="font-bold text-amber-500 mb-1">🚨 Jangan berhenti di 70-85%!</p>
+            <p className="font-bold text-amber-500 mb-1">🚨 Do not quit at 70-85%!</p>
             <p className="text-sm text-muted-foreground mb-3">
-              Kamu sedang mengerjakan: <strong className="text-foreground">&quot;{memory.idea.slice(0, 60)}...&quot;</strong>
-              <br />Terakhir: {new Date(memory.savedAt).toLocaleDateString()}. Lanjut ship!
+              You were working on: <strong className="text-foreground">&quot;{memory.idea.slice(0, 60)}...&quot;</strong>
+              <br />Last session: {new Date(memory.savedAt).toLocaleDateString()}. Keep shipping!
             </p>
             <div className="flex gap-2">
               <button onClick={loadMemory} className="px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-bold hover:bg-amber-400">Resume Project →</button>
-              <button onClick={() => setShowRescue(false)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">Mulai Baru</button>
+              <button onClick={() => setShowRescue(false)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">Start New</button>
             </div>
           </div>
         )}
@@ -251,7 +251,7 @@ export default function Home() {
         {memory && !showRescue && !results && (
           <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              🧠 Project terakhir: <strong className="text-foreground">&quot;{memory.idea.slice(0, 50)}&quot;</strong>
+              🧠 Last project: <strong className="text-foreground">&quot;{memory.idea.slice(0, 50)}&quot;</strong>
             </p>
             <button onClick={loadMemory} className="text-xs text-primary hover:underline">Resume →</button>
           </div>
@@ -264,8 +264,8 @@ export default function Home() {
               <span>Auto-detects 20+ languages · Generate → Execute → Ship</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Foundertion</h1>
-            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder yang ingat. Dan push kamu untuk ship.</p>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Tulis ideamu dalam bahasa apapun. Dapat validasi, rencana 90 hari, pitch script, dan landing copy. Lalu kita pastikan kamu ship-nya.</p>
+            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder that remembers. And pushes you to ship.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Write your idea in any language. Get validation, 90-day plan, pitch script & landing copy. Then we make sure you ship it.</p>
           </div>
         )}
 
@@ -274,14 +274,14 @@ export default function Home() {
             <textarea
               value={idea}
               onChange={e => setIdea(e.target.value)}
-              placeholder="Deskripsikan ide startupmu dalam bahasa apapun..."
+              placeholder="Describe your startup idea in any language..."
               className="w-full min-h-[120px] p-4 rounded-lg border border-input bg-background/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary text-base"
               disabled={loading}
             />
             <div className="mt-4 flex gap-3 justify-end flex-wrap">
               {results && (
                 <button onClick={() => { setResults(null); setIdea(""); }} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
-                  Ide Baru
+                  New Idea
                 </button>
               )}
               <button onClick={handleGenerate} disabled={loading} className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
@@ -296,7 +296,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-primary/10 text-primary text-sm border border-primary/20">
                 <Globe className="h-4 w-4" />
-                <span>Bahasa: {results.detectedLang}</span>
+                <span>Language: {results.detectedLang}</span>
               </div>
               <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
                 <Download className="h-4 w-4" />
@@ -324,8 +324,8 @@ export default function Home() {
             </div>
 
             <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/20 text-center">
-              <p className="font-bold text-primary mb-1">🚢 Sekarang ship. Jangan tunggu sempurna.</p>
-              <p className="text-sm text-muted-foreground">Done is better than perfect. Zone 70-85% adalah tempat project mati. Terobos.</p>
+              <p className="font-bold text-primary mb-1">🚢 Now ship it. Do not wait for perfect.</p>
+              <p className="text-sm text-muted-foreground">Done is better than perfect. The 70-85% zone is where projects die. Push through.</p>
             </div>
           </div>
         )}
@@ -334,7 +334,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
-        Foundertion — AI Co-Founder untuk Solo Founder di Seluruh Dunia
+        Foundertion — AI Co-Founder for Solo Founders Worldwide
       </footer>
     </div>
   );
