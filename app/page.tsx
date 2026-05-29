@@ -246,7 +246,7 @@ export default function Home() {
     return () => subscription.unsubscribe();
     const saved = localStorage.getItem("foundertion_memory");
     if (saved) {
-      const m: ProjectMemory = JSON.parse(saved);
+      const m: ProjectMemory = JSON.parse(saved as string);
       setMemory(m);
       const newStreak = updateStreak(m);
       setStreak(newStreak);
