@@ -235,13 +235,15 @@ export default function Home() {
   const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setUser(data.user);
+      if (data?.user) setUser(data.user);
     });
-    supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
+    return () => subscription.unsubscribe();
     const saved = localStorage.getItem("foundertion_memory");
     if (saved) {
       const m: ProjectMemory = JSON.parse(saved);
