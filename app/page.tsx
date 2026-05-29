@@ -1,15 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useTheme } from "next-themes";
-
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import WaitlistSection from "@/components/WaitlistSection";
-
-"use client";
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
 
@@ -27,42 +18,6 @@ interface ProjectMemory {
   savedAt: string;
   streak: number;
   lastVisit: string;
-}
-
-
-function WaitlistSection() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle");
-  const join = async () => {
-    if (!email.includes("@")) return;
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) throw new Error();
-      setStatus("success");
-    } catch { setStatus("error"); }
-  };
-  return (
-    <div className="max-w-2xl mx-auto my-12 p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
-      <h2 className="text-2xl font-bold mb-2">Join 100+ Solo Founders 🚀</h2>
-      <p className="text-muted-foreground mb-6 text-sm">Get notified when new features drop. No spam, ever.</p>
-      {status === "success" ? (
-        <div className="text-primary font-bold text-lg">You are on the list! Check your email. 🎉</div>
-      ) : (
-        <div className="flex gap-2 max-w-md mx-auto flex-wrap">
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 min-w-[200px] px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
-          <button onClick={join} disabled={status === "loading"} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
-            {status === "loading" ? "..." : "Join Waitlist"}
-          </button>
-        </div>
-      )}
-      {status === "error" && <p className="text-red-400 text-sm mt-2">Failed. Try again.</p>}
-    </div>
-  );
 }
 
 function ThemeToggle() {
@@ -109,11 +64,46 @@ function MD({ text }: { text: string }) {
   );
 }
 
+function WaitlistSection() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle");
+  const join = async () => {
+    if (!email.includes("@")) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("success");
+    } catch { setStatus("error"); }
+  };
+  return (
+    <div className="max-w-2xl mx-auto my-12 p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
+      <h2 className="text-2xl font-bold mb-2">Join 100+ Solo Founders 🚀</h2>
+      <p className="text-muted-foreground mb-6 text-sm">Get notified when new features drop. No spam, ever.</p>
+      {status === "success" ? (
+        <div className="text-primary font-bold text-lg">You are on the list! Check your email. 🎉</div>
+      ) : (
+        <div className="flex gap-2 max-w-md mx-auto flex-wrap">
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 min-w-[200px] px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
+          <button onClick={join} disabled={status === "loading"} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
+            {status === "loading" ? "..." : "Join Waitlist"}
+          </button>
+        </div>
+      )}
+      {status === "error" && <p className="text-red-400 text-sm mt-2">Failed. Try again.</p>}
+    </div>
+  );
+}
+
 const TABS = [
   { id: "validation", label: "⚡ Idea Validator" },
-  { id: "plan",       label: "🗺️ Business Plan" },
-  { id: "pitch",      label: "🎯 Pitch Script" },
-  { id: "landing",    label: "🚀 Landing Copy" },
+  { id: "plan", label: "🗺️ Business Plan" },
+  { id: "pitch", label: "🎯 Pitch Script" },
+  { id: "landing", label: "🚀 Landing Copy" },
 ];
 
 function getTabContent(results: Results, tab: string): string {
@@ -144,7 +134,6 @@ export default function Home() {
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
 
-  // Load memory on mount
   useEffect(() => {
     const saved = localStorage.getItem("foundertion_memory");
     if (saved) {
@@ -152,8 +141,6 @@ export default function Home() {
       setMemory(m);
       const newStreak = updateStreak(m);
       setStreak(newStreak);
-
-      // Check 70-85% rescue
       const savedAt = new Date(m.savedAt);
       const now = new Date();
       const diffDays = Math.floor((now.getTime() - savedAt.getTime()) / (1000 * 60 * 60 * 24));
@@ -166,8 +153,7 @@ export default function Home() {
     const prev: ProjectMemory | null = existing ? JSON.parse(existing) : null;
     const newStreak = updateStreak(prev);
     const m: ProjectMemory = {
-      idea,
-      results,
+      idea, results,
       savedAt: new Date().toISOString(),
       streak: newStreak,
       lastVisit: new Date().toISOString(),
@@ -179,7 +165,7 @@ export default function Home() {
   };
 
   const handleGenerate = async () => {
-    if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 characters / Min 10 karakter");
+    if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 karakter");
     setLoading(true);
     try {
       const res = await fetch("/api/generate", {
@@ -193,7 +179,7 @@ export default function Home() {
       setActiveTab("validation");
       saveMemory(idea, data);
     } catch {
-      alert("Failed to generate. Try again. / Gagal generate. Coba lagi.");
+      alert("Failed to generate. Coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -248,31 +234,24 @@ export default function Home() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-10">
-
-        {/* 70-85% Rescue Banner */}
         {showRescue && memory && (
           <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
-            <p className="font-bold text-amber-500 mb-1">🚨 Don&apos;t quit at 70-85%!</p>
+            <p className="font-bold text-amber-500 mb-1">🚨 Jangan berhenti di 70-85%!</p>
             <p className="text-sm text-muted-foreground mb-3">
-              You were working on: <strong className="text-foreground">&quot;{memory.idea.slice(0, 60)}...&quot;</strong>
-              <br />Last session: {new Date(memory.savedAt).toLocaleDateString()}. Let&apos;s keep shipping!
+              Kamu sedang mengerjakan: <strong className="text-foreground">&quot;{memory.idea.slice(0, 60)}...&quot;</strong>
+              <br />Terakhir: {new Date(memory.savedAt).toLocaleDateString()}. Lanjut ship!
             </p>
             <div className="flex gap-2">
-              <button onClick={loadMemory} className="px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-bold hover:bg-amber-400">
-                Resume Project →
-              </button>
-              <button onClick={() => setShowRescue(false)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
-                Start New
-              </button>
+              <button onClick={loadMemory} className="px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-bold hover:bg-amber-400">Resume Project →</button>
+              <button onClick={() => setShowRescue(false)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">Mulai Baru</button>
             </div>
           </div>
         )}
 
-        {/* Previous project hint */}
         {memory && !showRescue && !results && (
           <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              🧠 Last project: <strong className="text-foreground">&quot;{memory.idea.slice(0, 50)}&quot;</strong>
+              🧠 Project terakhir: <strong className="text-foreground">&quot;{memory.idea.slice(0, 50)}&quot;</strong>
             </p>
             <button onClick={loadMemory} className="text-xs text-primary hover:underline">Resume →</button>
           </div>
@@ -285,8 +264,8 @@ export default function Home() {
               <span>Auto-detects 20+ languages · Generate → Execute → Ship</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Foundertion</h1>
-            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder that remembers. And pushes you to ship.</p>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Write your idea in any language. Get validation, 90-day plan, pitch script & landing copy. Then we make sure you ship it.</p>
+            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder yang ingat. Dan push kamu untuk ship.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Tulis ideamu dalam bahasa apapun. Dapat validasi, rencana 90 hari, pitch script, dan landing copy. Lalu kita pastikan kamu ship-nya.</p>
           </div>
         )}
 
@@ -295,21 +274,17 @@ export default function Home() {
             <textarea
               value={idea}
               onChange={e => setIdea(e.target.value)}
-              placeholder="Describe your startup idea in any language..."
+              placeholder="Deskripsikan ide startupmu dalam bahasa apapun..."
               className="w-full min-h-[120px] p-4 rounded-lg border border-input bg-background/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary text-base"
               disabled={loading}
             />
             <div className="mt-4 flex gap-3 justify-end flex-wrap">
               {results && (
                 <button onClick={() => { setResults(null); setIdea(""); }} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
-                  New Idea
+                  Ide Baru
                 </button>
               )}
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50"
-              >
+              <button onClick={handleGenerate} disabled={loading} className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50">
                 {loading ? "Generating..." : "⚡ Generate All 4 Tools"}
               </button>
             </div>
@@ -321,7 +296,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-primary/10 text-primary text-sm border border-primary/20">
                 <Globe className="h-4 w-4" />
-                <span>Language: {results.detectedLang}</span>
+                <span>Bahasa: {results.detectedLang}</span>
               </div>
               <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent">
                 <Download className="h-4 w-4" />
@@ -348,19 +323,18 @@ export default function Home() {
               {activeTab === "landing" && <MD text={results.landing} />}
             </div>
 
-            {/* Ship reminder */}
             <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/20 text-center">
-              <p className="font-bold text-primary mb-1">🚢 Now ship it. Don&apos;t wait for perfect.</p>
-              <p className="text-sm text-muted-foreground">Done is better than perfect. The 70-85% zone is where projects die. Push through.</p>
+              <p className="font-bold text-primary mb-1">🚢 Sekarang ship. Jangan tunggu sempurna.</p>
+              <p className="text-sm text-muted-foreground">Done is better than perfect. Zone 70-85% adalah tempat project mati. Terobos.</p>
             </div>
           </div>
         )}
+
+        <WaitlistSection />
       </main>
 
-      <WaitlistSection />
-      <WaitlistSection />
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
-        Foundertion — AI Co-Founder for Solo Founders Worldwide
+        Foundertion — AI Co-Founder untuk Solo Founder di Seluruh Dunia
       </footer>
     </div>
   );
