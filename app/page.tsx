@@ -334,8 +334,11 @@ export default function Home() {
                 {streak} day streak
               </div>
             )}
-            <Link href="/login" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">
+<Link href="/login" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">
               Sign In
+            </Link>
+            <Link href="/dashboard" className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">
+              Dashboard
             </Link>
             <ThemeToggle />
           </div>
