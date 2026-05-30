@@ -22,7 +22,25 @@ export async function GET(request: NextRequest) {
         },
       }
     );
-    await supabase.auth.exchangeCodeForSession(code);
+
+    const { data: { user } } = await supabase.auth.exchangeCodeForSession(code);
+
+    // Auto-create profile
+    if (user) {
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+
+      if (!existing) {
+        await supabase.from("profiles").insert({
+          id: user.id,
+          email: user.email,
+          created_at: new Date().toISOString(),
+        });
+      }
+    }
   }
 
   return NextResponse.redirect(new URL("/", request.url));
