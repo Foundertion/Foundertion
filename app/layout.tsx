@@ -7,6 +7,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  verification: {
+    google: "HM9se7lQ_lx-GAitEKRTfxgjbFuy0rnP7JdCpqOrark",
+  },
   title: "Foundertion — Your AI Co-Founder",
   description: "Auto-detect language. Validate ideas, create business plans, pitch scripts, and landing page copy in seconds. Built for solo founders worldwide.",
   keywords: ["solo founder", "startup", "AI co-founder", "business validation", "pitch deck", "MVP"],
