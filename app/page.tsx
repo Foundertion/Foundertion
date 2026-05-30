@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
@@ -228,6 +229,8 @@ export default function Home() {
   const [streak, setStreak] = useState(1);
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
+  const [toast, setToast] = useState("");
+  const searchParams = useSearchParams();
   const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
@@ -310,6 +313,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg text-sm font-medium animate-bounce">
+          ✅ {toast}
+        </div>
+      )}
       {showCheckin && <DailyCheckin memory={memory} onClose={() => setShowCheckin(false)} />}
       <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
