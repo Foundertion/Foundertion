@@ -25,21 +25,19 @@ export async function GET(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.exchangeCodeForSession(code);
 
-    // Auto-create profile
     if (user) {
-      const { data: existing } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", user.id)
-        .single();
+      // Use service role for insert
+      const adminSupabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        { cookies: { getAll: () => [], setAll: () => {} } }
+      );
 
-      if (!existing) {
-        await supabase.from("profiles").insert({
-          id: user.id,
-          email: user.email,
-          created_at: new Date().toISOString(),
-        });
-      }
+      await adminSupabase.from("profiles").upsert({
+        id: user.id,
+        email: user.email,
+        created_at: new Date().toISOString(),
+      }, { onConflict: "id" });
     }
   }
 
