@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
@@ -230,7 +229,6 @@ export default function Home() {
   const [showRescue, setShowRescue] = useState(false);
   const [exported, setExported] = useState(false);
   const [toast, setToast] = useState("");
-  const searchParams = useSearchParams();
   const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
