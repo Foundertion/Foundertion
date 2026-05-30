@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -13,14 +12,19 @@ export default function LoginPage() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
+  const getSupabase = async () => {
+    const { createClient } = await import("@/lib/supabase");
+    return createClient();
+  };
+
   const handleSubmit = async () => {
     if (!email.includes("@")) return setError("Enter valid email");
     if (password.length < 6) return setError("Password min 6 characters");
     setLoading(true);
     setError("");
     setSuccess("");
-    const supabase = createClient();
     try {
+      const supabase = await getSupabase();
       if (mode === "register") {
         const { error } = await supabase.auth.signUp({
           email,
@@ -30,15 +34,18 @@ export default function LoginPage() {
         if (error) throw error;
         setSuccess("Check your email for confirmation link!");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        setSuccess("Signed in! Redirecting...");
-        setTimeout(() => router.push("/"), 1000);
+        if (data.user) {
+          setSuccess("Signed in! Redirecting...");
+          setTimeout(() => router.push("/"), 1500);
+        }
       }
     } catch (e: any) {
       setError(e.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleMagicLink = async () => {
@@ -46,8 +53,8 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     setSuccess("");
-    const supabase = createClient();
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: "https://foundertion.vercel.app/auth/callback" }
@@ -56,8 +63,9 @@ export default function LoginPage() {
       setSuccess("Magic link sent! Check your email.");
     } catch (e: any) {
       setError(e.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -76,6 +84,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSubmit()}
             placeholder="your@email.com"
             className="w-full px-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -83,6 +92,7 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSubmit()}
             placeholder="Password (min 6 characters)"
             className="w-full px-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -102,9 +112,9 @@ export default function LoginPage() {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50"
+            className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-all"
           >
-            {loading ? "Loading..." : mode === "login" ? "Sign In" : "Create Account"}
+            {loading ? "⏳ Loading..." : mode === "login" ? "Sign In →" : "Create Account →"}
           </button>
 
           <div className="relative my-2">
@@ -119,7 +129,7 @@ export default function LoginPage() {
           <button
             onClick={handleMagicLink}
             disabled={loading}
-            className="w-full px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent disabled:opacity-50"
+            className="w-full px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent disabled:opacity-50 transition-all"
           >
             Send Magic Link ✨
           </button>
@@ -128,14 +138,14 @@ export default function LoginPage() {
             {mode === "login" ? "No account?" : "Have an account?"}{" "}
             <button
               onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); setSuccess(""); }}
-              className="text-primary hover:underline"
+              className="text-primary hover:underline font-medium"
             >
               {mode === "login" ? "Sign up free" : "Sign in"}
             </button>
           </p>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-4">
+        <p className="text-center text-xs text-muted-foreground mt-6">
           <a href="/" className="hover:text-primary">← Back to Foundertion</a>
         </p>
       </div>
