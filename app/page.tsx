@@ -253,6 +253,26 @@ export default function Home() {
     setShowRescue(false);
   };
 
+  const saveToCloud = async (ideaText: string, res: Results) => {
+    try {
+      const { createClient } = await import("@/lib/supabase");
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      await supabase.from("projects").insert({
+        id: crypto.randomUUID(),
+        user_id: user.id,
+        name: ideaText.slice(0, 50),
+        idea: ideaText,
+        language: res.detectedLang,
+        validation: res.validation,
+        plan: res.plan,
+        pitch: res.pitch,
+        landing: res.landing,
+      });
+    } catch (e) { console.error("Save error:", e); }
+  };
+
   const handleGenerate = async () => {
     if (!idea.trim() || idea.trim().length < 10) return alert("Min 10 characters");
     setLoading(true);
@@ -267,6 +287,7 @@ export default function Home() {
       setResults(data);
       setActiveTab("validation");
       saveMemory(idea, data);
+      saveToCloud(idea, data);
     } catch {
       alert("Failed to generate. Try again.");
     } finally {
