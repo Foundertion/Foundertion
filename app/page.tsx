@@ -456,8 +456,8 @@ export default function Home() {
               <span>Auto-detects 20+ languages</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Foundertion</h1>
-            <p className="text-xl text-muted-foreground mb-2">AI Co-Founder that remembers. And pushes you to ship.</p>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Write your idea in any language. Get validation, 90-day plan, pitch script and landing copy.</p>
+            <p className="text-xl text-muted-foreground mb-2">THE AI-NATIVE FOUNDER COMMUNITY</p>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Real research. Ship checklists. Human community. Zero bullshit.</p>
           </div>
         )}
 
@@ -495,6 +495,10 @@ export default function Home() {
                   {tab.label}
                 </button>
               ))}
+            </div>
+            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex gap-2">
+              <span className="text-amber-500 flex-shrink-0">⚠️</span>
+              <p className="text-xs text-amber-500/80">AI-Generated. Unvalidated. Test with real users within 48 hours. Foundertion is not responsible for business decisions based on this output.</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-6">
               <div className="flex justify-end mb-3">
