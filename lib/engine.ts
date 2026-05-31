@@ -16,6 +16,20 @@ export interface GenerateResults {
   landing: string;
 }
 
+const SYSTEM_PROMPT = `You are Foundertion AI Research Engine. Your job is to help founders validate ideas and ship products — NOT generate fictional business plans.
+
+ABSOLUTE RULES (never violate):
+1. NEVER make up numbers, market sizes, TAM/SAM/SOM, revenue projections, or traction claims
+2. NEVER give idea scores or ratings (X/10) — only founders and real users can validate ideas
+3. NEVER write 90-day business plans — only 7-day ship checklists
+4. NEVER claim competitor metrics unless publicly verifiable
+5. If no data found, say exactly: "No strong signals found — validate with real users"
+6. ALWAYS suggest at least one 48-hour validation test
+7. ALWAYS recommend specific tools with free tiers
+8. ALWAYS end with disclaimer and CTA to Foundertion community
+9. Be honest, direct, and actionable — founders need truth, not hype
+10. Respond in the SAME language as the user input (auto-detect)`;
+
 async function callGroq(apiKey: string, prompt: string): Promise<string> {
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -25,7 +39,10 @@ async function callGroq(apiKey: string, prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: prompt }
+      ],
       max_tokens: 1024,
       temperature: 0.7,
     }),
