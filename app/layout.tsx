@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="msapplication-TileColor" content="#0d1f17" />
         <meta name="theme-color" content="#0d1f17" />
-        <meta name='impact-site-verification' value='a1aa9588-a0a3-4649-ba9d-fe5ae6a5018b' />
+        <meta name='impact-site-verification' content='a1aa9588-a0a3-4649-ba9d-fe5ae6a5018b' />
 </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
