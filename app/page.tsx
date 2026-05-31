@@ -518,6 +518,7 @@ export default function Home() {
         <WaitlistSection />
       </main>
 
+      <div style={{display:"none"}}>Impact-Site-Verification: df327a34-0d4e-4136-a9f8-ad9c27782cc7</div>
       <footer className="border-t border-border/30 mt-12 py-6 text-center text-sm text-muted-foreground">
         Foundertion — AI Co-Founder for Solo Founders Worldwide
       </footer>
