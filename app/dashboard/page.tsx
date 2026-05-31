@@ -11,6 +11,11 @@ export default function Dashboard() {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [saving, setSaving] = useState(false);
+  const [username, setUsername] = useState("");
+  const [currentProject, setCurrentProject] = useState("");
+  const [projectUrl, setProjectUrl] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [activeProject, setActiveProject] = useState<any>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -33,6 +38,12 @@ export default function Dashboard() {
       const p = profileData || { email: user.email, id: user.id };
       setProfile(p);
       setDisplayName(p.full_name || "");
+      setBio(p.bio || "");
+      setUsername(p.username || "");
+      setCurrentProject(p.current_project || "");
+      setProjectUrl(p.project_url || "");
+      setTwitter(p.twitter || "");
+      setProgress(p.progress || 0);
       setBio(p.bio || "");
 
       const { data: projectsData } = await supabase
@@ -201,6 +212,23 @@ export default function Dashboard() {
                   <textarea value={bio} onChange={e => setBio(e.target.value)}
                     placeholder="Short bio — what are you building?" rows={2}
                     className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none" />
+                  <input value={username} onChange={e => setUsername(e.target.value)}
+                    placeholder="username (letters, numbers, underscore)"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input value={currentProject} onChange={e => setCurrentProject(e.target.value)}
+                    placeholder="What are you currently building?"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input value={projectUrl} onChange={e => setProjectUrl(e.target.value)}
+                    placeholder="Project URL (https://...)"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input value={twitter} onChange={e => setTwitter(e.target.value)}
+                    placeholder="Twitter/X username (without @)"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">Progress: {progress}%</label>
+                    <input type="range" min={0} max={100} value={progress} onChange={e => setProgress(Number(e.target.value))}
+                      className="w-full accent-primary" />
+                  </div>
                   <div className="flex gap-2">
                     <button onClick={saveProfile} disabled={saving}
                       className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 disabled:opacity-50">
@@ -217,6 +245,12 @@ export default function Dashboard() {
                   </div>
                   <p className="text-sm text-muted-foreground">{profile?.email}</p>
                   {profile?.bio && <p className="text-sm text-muted-foreground mt-1 italic">{profile.bio}</p>}
+                  {profile?.username && (
+                    <a href={"/profile/" + profile.username} target="_blank"
+                      className="text-xs text-primary hover:underline mt-1 block">
+                      🔗 foundertion.vercel.app/profile/{profile.username}
+                    </a>
+                  )}
                   <div className="flex items-center gap-3 mt-2">
                     <span className="text-xs text-orange-400 font-bold">🔥 {profile?.streak || 1} day streak</span>
                     <span className="text-xs text-muted-foreground">· {projects.length} projects</span>
