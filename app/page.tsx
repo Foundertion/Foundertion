@@ -96,6 +96,13 @@ function WaitlistSection() {
         </div>
       )}
       {status === "error" && <p className="text-red-400 text-sm mt-2">Failed. Try again.</p>}
+      <div className="mt-4 flex items-center justify-center gap-2">
+        <span className="text-xs text-muted-foreground">or</span>
+        <a href="https://discord.gg/fxUEHJgg8" target="_blank" rel="noopener noreferrer"
+          className="text-xs font-bold text-primary hover:underline">
+          Join Discord Community →
+        </a>
+      </div>
     </div>
   );
 }
