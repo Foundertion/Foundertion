@@ -431,8 +431,6 @@ export default function Home() {
             {streak > 1 && <div className="flex items-center gap-1 text-sm font-bold text-orange-400"><Flame className="h-4 w-4" />{streak}</div>}
             <button onClick={() => setShowCheckin(true)} className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">Daily Check-in</button>
             <Link href="/login" className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">Sign In</Link>
-            <Link href="/tools" className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">Tools</Link>
-            <Link href="/stack" className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">Stack</Link>
             <Link href="/dashboard" className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">Dashboard</Link>
             <ThemeToggle />
           </div>
