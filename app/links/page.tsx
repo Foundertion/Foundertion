@@ -2,7 +2,6 @@ export default function LinksPage() {
   const links = [
     { emoji: "🚀", label: "Try Foundertion — Free AI Tools", url: "/", primary: true },
     { emoji: "💬", label: "Join Discord Community", url: "https://discord.gg/fxUEHJgg8", primary: false },
-    { emoji: "🛠️", label: "Curated Tools for Solo Founders", url: "/tools", primary: false },
     { emoji: "📧", label: "Join Weekly Newsletter", url: "/#waitlist", primary: false },
     { emoji: "🐦", label: "Follow on X/Twitter", url: "https://x.com/6founder", primary: false },
     { emoji: "📸", label: "Follow on Instagram", url: "https://instagram.com/6founder", primary: false },
