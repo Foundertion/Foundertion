@@ -463,8 +463,8 @@ export default function Home() {
               <span>Auto-detects 20+ languages</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Foundertion</h1>
-            <p className="text-xl text-muted-foreground mb-2">THE AI-NATIVE FOUNDER COMMUNITY</p>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Real research. Ship checklists. Human community. Zero bullshit.</p>
+            <p className="text-xl text-muted-foreground mb-2">Your AI co-founder for the 3am doubts.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Validate ideas, get a real plan, and stop guessing — before you burn another month.</p>
           </div>
         )}
 
