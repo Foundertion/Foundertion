@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Globe, Copy, Download, Check, Flame } from "lucide-react";
+import { Sun, Moon, Globe, Copy, Download, Check, Flame, Menu, X } from "lucide-react";
 import Link from "next/link";
 
 interface Results {
@@ -220,6 +220,7 @@ export default function Home() {
   const [exported, setExported] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
   const [toast, setToast] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
@@ -422,19 +423,49 @@ export default function Home() {
 
       <header className="border-b border-border/50 sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/android-chrome-192.png" alt="Foundertion" className="h-8 w-8 rounded-lg" />
-            <span className="font-bold text-xl">Foundertion</span>
-            <span className="hidden sm:inline text-xs text-muted-foreground">YOUR AI CO-FOUNDER</span>
+          <div className="flex items-center gap-3 min-w-0">
+            <img src="/android-chrome-192.png" alt="Foundertion" className="h-8 w-8 rounded-lg shrink-0" />
+            <span className="font-bold text-xl truncate">Foundertion</span>
+            <span className="hidden lg:inline text-xs text-muted-foreground shrink-0">YOUR AI CO-FOUNDER</span>
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Desktop nav */}
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
             {streak > 1 && <div className="flex items-center gap-1 text-sm font-bold text-orange-400"><Flame className="h-4 w-4" />{streak}</div>}
             <button onClick={() => setShowCheckin(true)} className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">Daily Check-in</button>
             <Link href="/login" className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-bold hover:bg-primary/20">Sign In</Link>
             <Link href="/dashboard" className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-accent">Dashboard</Link>
             <ThemeToggle />
           </div>
+
+          {/* Mobile controls: streak + theme toggle always visible, rest behind hamburger */}
+          <div className="flex sm:hidden items-center gap-1 shrink-0">
+            {streak > 1 && <div className="flex items-center gap-1 text-sm font-bold text-orange-400 mr-1"><Flame className="h-4 w-4" />{streak}</div>}
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileMenuOpen(o => !o)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              className="p-2 rounded-md hover:bg-primary/10 transition-colors text-primary"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden border-t border-border/50 bg-background/95 backdrop-blur-md px-4 py-3 flex flex-col gap-2">
+            <button
+              onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}
+              className="px-3 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm font-bold hover:bg-primary/20 text-left"
+            >
+              Daily Check-in
+            </button>
+            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm font-bold hover:bg-primary/20">Sign In</Link>
+            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-lg border border-border text-sm hover:bg-accent">Dashboard</Link>
+          </div>
+        )}
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-10">
