@@ -13,7 +13,7 @@ export default function LinksPage() {
         <div style={{textAlign:"center",marginBottom:"2rem"}}>
           <img src="/android-chrome-192.png" alt="Foundertion" style={{height:"80px",width:"80px",borderRadius:"20px",margin:"0 auto 1rem"}} />
           <h1 style={{fontSize:"1.5rem",fontWeight:700,color:"#e8ede9",margin:"0 0 0.3rem"}}>Foundertion</h1>
-          <p style={{fontSize:"0.8rem",color:"#4a7060",margin:0}}>THE AI-NATIVE FOUNDER COMMUNITY</p>
+          <p style={{fontSize:"0.8rem",color:"#4a7060",margin:0}}>Stop guessing. Start shipping.</p>
           <p style={{fontSize:"0.72rem",color:"#2a9e6a",marginTop:"0.4rem"}}>Build alone, never ship alone. 🚀</p>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:"0.7rem"}}>

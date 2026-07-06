@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
@@ -18,7 +18,6 @@ export default function Dashboard() {
   const [progress, setProgress] = useState(0);
   const [toast, setToast] = useState("");
   const [activeProject, setActiveProject] = useState<any>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const showToast = (msg: string) => {

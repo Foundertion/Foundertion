@@ -24,7 +24,7 @@ interface ProjectMemory {
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-2 rounded-md hover:bg-primary/10 transition-colors text-primary">
+    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"} className="p-2 rounded-md hover:bg-primary/10 transition-colors text-primary">
       {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
   );
