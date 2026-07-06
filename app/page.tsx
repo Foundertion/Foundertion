@@ -5,12 +5,21 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Globe, Copy, Download, Check, Flame, Menu, X } from "lucide-react";
 import Link from "next/link";
 
+interface HNSignal {
+  title: string;
+  url: string;
+  points: number;
+  numComments: number;
+  createdAt: string;
+}
+
 interface Results {
   detectedLang: string;
   validation: string;
   plan: string;
   pitch: string;
   landing: string;
+  hnSignals?: HNSignal[];
 }
 
 interface ProjectMemory {
@@ -542,6 +551,19 @@ export default function Home() {
               <div className="flex justify-end mb-3">
                 <CopyButton text={getTabContent(results, activeTab)} />
               </div>
+              {activeTab === "validation" && results.hnSignals && results.hnSignals.length > 0 && (
+                <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <p className="text-xs font-bold text-primary mb-2">🔗 Live signals from Hacker News (verify yourself)</p>
+                  <div className="space-y-1.5">
+                    {results.hnSignals.map((s, i) => (
+                      <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                        className="block text-xs text-muted-foreground hover:text-primary hover:underline truncate">
+                        {s.title} <span className="text-primary/70">· {s.points}pt, {s.numComments} comments</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
               {activeTab === "validation" && <MD text={results.validation} />}
               {activeTab === "plan" && <MD text={results.plan} />}
               {activeTab === "pitch" && <MD text={results.pitch} />}
