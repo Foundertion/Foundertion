@@ -7,13 +7,18 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://foundertion.vercel.app"),
   verification: {
     google: "HM9se7lQ_lx-GAitEKRTfxgjbFuy0rnP7JdCpqOrark",
   },
-  title: "Foundertion — Your AI Co-Founder",
+  title: {
+    default: "Foundertion — Your AI Co-Founder",
+    template: "%s | Foundertion",
+  },
   description: "Auto-detect language. Validate ideas, create business plans, pitch scripts, and landing page copy in seconds. Built for solo founders worldwide.",
   keywords: ["solo founder", "startup", "AI co-founder", "business validation", "pitch deck", "MVP"],
   authors: [{ name: "Foundertion" }],
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Foundertion — Your AI Co-Founder",
     description: "Validate your business idea in any language. Get validation, roadmap, pitch script & landing copy in seconds.",
@@ -37,6 +42,18 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Foundertion",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: "AI co-founder for solo entrepreneurs — validate ideas, generate business plans, pitch scripts, and landing page copy in seconds.",
+  url: "https://foundertion.vercel.app",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: { "@type": "Organization", name: "Foundertion" },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -48,6 +65,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="msapplication-TileColor" content="#0d1f17" />
         <meta name="theme-color" content="#0d1f17" />
         <meta name='impact-site-verification' content='550ec25a-330f-4724-a756-fee2e525d228' />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
 </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

@@ -1,6 +1,36 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
+  );
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username, full_name, bio")
+    .eq("username", params.username)
+    .eq("is_public", true)
+    .single();
+
+  if (!profile) return { title: "Profile not found" };
+
+  const displayName = profile.full_name || profile.username;
+  return {
+    title: `${displayName} (@${profile.username})`,
+    description: profile.bio || `${displayName}'s founder profile on Foundertion — building in public.`,
+    openGraph: {
+      title: `${displayName} on Foundertion`,
+      description: profile.bio || `Follow ${displayName}'s founder journey.`,
+      type: "profile",
+    },
+  };
+}
 
 export default async function ProfilePage({ params }: { params: { username: string } }) {
   const cookieStore = await cookies();
